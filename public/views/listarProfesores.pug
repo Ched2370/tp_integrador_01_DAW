@@ -4,7 +4,7 @@ block contenido
     .flex.justify-end.mb-4
         ul.flex.space-x-4
             li
-                a(href="/estudiantes/creaEstudiantes" class="text-green-600 hover:text-green-800") Agregar Profesor 
+                a(href="/profesores/creaProfesores" class="text-green-600 hover:text-green-800") Agregar Profesor 
     
     .py-10
         h1.text-4xl.my-10.font-extrabold.text-center Proyecto
@@ -22,7 +22,7 @@ block contenido
                     th.text-left.text-gray-500.uppercase.px-6.py-3 Telefono
                     th.text-left.text-gray-500.uppercase.px-6.py-3 Acciones
             tbody
-                each estudiante in estudiantes
+                each profesor in profesores
                     tr
                         td.px-6.py-4= profesor.dni
                         td.px-6.py-4= profesor.nombre
@@ -31,7 +31,7 @@ block contenido
                         td.px-6.py-4= profesor.profesion
                         td.px-6.py-4= profesor.telefono
                         td.px-6.py-4
-                            a.text-blue-500(href=`/profeosres/modificaProfesoress/${profesor.id}`) Editar
+                            a.text-blue-500(href=`/profesores/modificaProfesor/${profesor.id}`) Editar
                             a.text-red-500.ml-2(href="#", onclick=`eliminarProfesor('${profesor.id}')`) Eliminar
 
 block scripts
