@@ -13,7 +13,7 @@ const express_1 = require("express");
 const ProfesoresController_1 = require("../controllers/ProfesoresController");
 const router = (0, express_1.Router)();
 router.get('/listarProfesores', ProfesoresController_1.consultarTodos);
-router.get('/creaProfesor', (req, res) => {
+router.get('/creaProfesores', (req, res) => {
     res.render('creaProfesores', {
         pagina: 'Crear Profesor',
     });
