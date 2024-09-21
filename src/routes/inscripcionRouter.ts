@@ -1,13 +1,25 @@
-import express from "express";
-const router=express.Router();
-import incripcionController from '../controllers/InscripcionController';
+import { Router } from 'express';
+import {
+  consultarTodos,
+  consultarxAlumno,
+  consultarxCurso,
+} from '../controllers/InscripcionController';
+const router = Router();
 
-router.get('/',incripcionController.consultarInscripciones);
-router.get('/xAlumno/:id',incripcionController.consultarxAlumno );
-router.get('/xCurso/:id',incripcionController.consultarxCurso );
-router.post('/:estudiante_id/:curso_id',incripcionController.calificar );
+router.get('/listarInscripciones', consultarTodos);
 
-router.post('/',incripcionController.inscribir );
-router.delete('/:estudiante_id/:curso_id',incripcionController.cancelarInscripcion);
+router.get('/creaInscripcion', (req, res) => {
+  res.render('creaInscripcion', {
+    pagina: 'Crear Inscripcion',
+  });
+});
+
+router.get('/xAlumno/:id', consultarxAlumno);
+router.get('/xCurso/:id', consultarxCurso);
+
+// router.post('/:estudiante_id/:curso_id',calificar );
+
+// router.post('/',inscribir );
+// router.delete('/:estudiante_id/:curso_id',cancelarInscripcion);
 
 export default router;

@@ -16,11 +16,6 @@ const app = (0, express_1.default)();
 //habilitamos pug
 app.set('view engine', 'pug');
 app.set('views', path_1.default.join(__dirname, '../public/views'));
-//copiar la carpeta views en public
-//la línea 15 la comentamos y ponemos la nueva ubicación,
-//ojo que nos falta modificar el _dirname, descomentar la línea 19
-//app.set('views', path.join(__dirname, '.public/views'));
-//carpeta pblica
 app.use(express_1.default.static('public'));
 app.use((0, method_override_1.default)('_method'));
 app.use(express_1.default.json());

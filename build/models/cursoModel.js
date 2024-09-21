@@ -11,8 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Curso = void 0;
 const typeorm_1 = require("typeorm");
-const profesorModel_1 = require("./profesorModel");
 const estudianteModel_1 = require("./estudianteModel");
+const profesorModel_1 = require("./profesorModel");
 let Curso = class Curso {
 };
 exports.Curso = Curso;
@@ -37,8 +37,8 @@ __decorate([
     __metadata("design:type", Date)
 ], Curso.prototype, "updateAt", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => profesorModel_1.Profesor, profesor => profesor.cursos),
-    (0, typeorm_1.JoinColumn)({ name: 'Profesor_id' }),
+    (0, typeorm_1.ManyToOne)(() => profesorModel_1.Profesor, (profesor) => profesor.cursos),
+    (0, typeorm_1.JoinColumn)({ name: 'profesor_id' }),
     __metadata("design:type", profesorModel_1.Profesor)
 ], Curso.prototype, "profesor", void 0);
 __decorate([
@@ -46,7 +46,7 @@ __decorate([
     (0, typeorm_1.JoinTable)({
         name: 'cursos_estudiantes',
         joinColumn: { name: 'curso_id', referencedColumnName: 'id' },
-        inverseJoinColumn: { name: 'estudiante_id', referencedColumnName: 'id' }
+        inverseJoinColumn: { name: 'estudiante_id', referencedColumnName: 'id' },
     }),
     __metadata("design:type", Array)
 ], Curso.prototype, "estudiantes", void 0);

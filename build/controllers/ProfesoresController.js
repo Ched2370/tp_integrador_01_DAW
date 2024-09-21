@@ -111,7 +111,7 @@ const insertar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 where: [{ dni }, { email }],
             });
             if (existeProfesor) {
-                throw new Error('El estudiante ya existe.');
+                throw new Error('El profesor ya existe.');
             }
             const nuevoProfesor = profesorRepository.create({
                 dni,

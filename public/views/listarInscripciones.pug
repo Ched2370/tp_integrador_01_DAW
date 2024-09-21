@@ -1,0 +1,52 @@
+extends ./index
+
+block contenido
+    .flex.justify-end.mb-4
+        ul.flex.space-x-4
+            li
+                a(href="/inscripciones/creaInscripciones" class="text-green-600 hover:text-green-800") Inscribir
+    
+    .py-10
+        h1.text-4xl.my-10.font-extrabold.text-center Proyecto
+            span.font-normal Universidad
+        h2.text-center.text-2xl.font-extrabold= pagina
+      
+        table.table-auto.w-full.mt-4
+            thead
+                tr
+                    th.text-left.text-gray-500.uppercase.px-6.py-3 Curso
+                    th.text-left.text-gray-500.uppercase.px-6.py-3 Estudiante
+                    th.text-left.text-gray-500.uppercase.px-6.py-3 Nota
+
+            tbody
+                each inscripcion in inscripciones
+                    tr
+                        td.px-6.py-4= inscripcion.curso_id
+                        td.px-6.py-4= inscripcion.estudiante_id
+                        td.px-6.py-4= inscripcion.nota
+                        td.px-6.py-4
+                            a.text-blue-500(href=`/inscripciones/modificaInscripcion/${estudiante.id}/${curso.id}`) Editar
+                            a.text-red-500.ml-2(href="#", onclick=`eliminarInscripcion/${estudiante.id}/${curso.id}`) Eliminar
+
+block scripts
+    script.
+        function eliminarInscripcion(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar este estudiante?')) {
+                fetch(`/inscripciones/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.mensaje === 'Inscripcion eliminado') {
+                        alert('Inscripcion eliminado con éxito.');
+                        window.location.reload(); 
+                    } else {
+                        alert(data.mensaje); 
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al eliminar la inscripcion.');
+                });
+            }
+        }

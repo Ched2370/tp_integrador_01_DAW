@@ -14,19 +14,16 @@ block contenido
         .mt-8.mx-auto.max-w-md
             .bg-white.py-8.px-4.shadow
                 form.space-y-5(method='POST' action='/cursos' noValidate)
-                  
-                    
                     div
-                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="dni") DNI
-                        input#dni.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="DNI" type="text" name="dni" value=curso? curso.dni : '')
+                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="nombre") Curso
+                        input#nombre.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Curso" type="text" name="nombre" value=curso ? curso.nombre : '')
 
                     div
-                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="nombre") Nombre
-                        input#nombre.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Nombre" type="text" name="nombre" value=curso? curso.nombre : '')
+                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="descripcion") Descripción
+                        input#descripcion.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Descripción" type="text" name="descripcion" value=curso ? curso.descripcion : '')
                     
                     div
-                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="apellido") Apellido
-                        input#apellido.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Apellido" type="text" name="apellido" value=curso? curso.profesor_id : '')
+                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="profesor_id") ID Profesor
+                        input#profesor_id.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="ID profesor" type="text" name="profesor_id" value=curso ? curso.profesor_id : '')
                     
-                    
-                    input(class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 cursor-pointer" type="submit" value="Registrar Estudiante")
+                    input(class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 cursor-pointer" type="submit" value="Registrar Curso")
