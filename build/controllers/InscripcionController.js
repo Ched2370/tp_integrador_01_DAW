@@ -9,27 +9,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.consultarTodos = exports.validar = void 0;
+exports.consultarxCurso = exports.consultarxAlumno = exports.consultarTodos = exports.validar = void 0;
 const express_validator_1 = require("express-validator");
 const conexion_1 = require("../db/conexion");
 const cursoEstudianteModel_1 = require("../models/cursoEstudianteModel");
 var inscripciones;
+// Validaciones
 const validar = () => [
     (0, express_validator_1.check)('estudiante_id')
         .notEmpty()
         .withMessage('Debe agregar el ID del estudiante')
         .isNumeric()
-        .withMessage('debe ser un numero'),
+        .withMessage('Debe ser un número'),
     (0, express_validator_1.check)('curso_id')
         .notEmpty()
         .withMessage('Debe agregar el ID del curso')
         .isNumeric()
-        .withMessage('debe ser un numero'),
+        .withMessage('Debe ser un número'),
     (req, res, next) => {
         const errores = (0, express_validator_1.validationResult)(req);
         if (!errores.isEmpty()) {
             return res.render('creaInscripciones', {
-                pagina: 'Crea Inscripcion',
+                pagina: 'Crea Inscripción',
                 errores: errores.array(),
             });
         }
@@ -37,10 +38,10 @@ const validar = () => [
     },
 ];
 exports.validar = validar;
+// Consultar todas las inscripciones
 const consultarTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const inscripcionesRepository = conexion_1.AppDataSource.getRepository(cursoEstudianteModel_1.CursoEstudiante);
-        console.log('rede');
         inscripciones = yield inscripcionesRepository.find();
         res.render('listarInscripciones', {
             pagina: 'Lista de inscripciones',
@@ -50,8 +51,51 @@ const consultarTodos = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
     catch (err) {
         if (err instanceof Error) {
-            res.status(500).send(err.message);
+            return res.status(500).send(err.message);
         }
     }
 });
 exports.consultarTodos = consultarTodos;
+// Consultar inscripción por alumno
+const consultarxAlumno = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const idNumber = Number(id);
+    if (isNaN(idNumber)) {
+        throw new Error('ID inválido, debe ser un número');
+    }
+    try {
+        const inscripcionRepository = conexion_1.AppDataSource.getRepository(cursoEstudianteModel_1.CursoEstudiante);
+        const inscripcion = yield inscripcionRepository.findOne({
+            where: { estudiante_id: idNumber },
+        });
+        return inscripcion || null;
+    }
+    catch (err) {
+        if (err instanceof Error) {
+            throw err;
+        }
+        throw new Error('Error desconocido');
+    }
+});
+exports.consultarxAlumno = consultarxAlumno;
+const consultarxCurso = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const idNumber = Number(id);
+    if (isNaN(idNumber)) {
+        throw new Error('ID inválido, debe ser un número');
+    }
+    try {
+        const inscripcionRepository = conexion_1.AppDataSource.getRepository(cursoEstudianteModel_1.CursoEstudiante);
+        const inscripcion = yield inscripcionRepository.findOne({
+            where: { curso_id: idNumber },
+        });
+        return inscripcion || null;
+    }
+    catch (err) {
+        if (err instanceof Error) {
+            throw err;
+        }
+        throw new Error('Error desconocido');
+    }
+});
+exports.consultarxCurso = consultarxCurso;

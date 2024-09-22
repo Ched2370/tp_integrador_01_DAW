@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { check, validationResult } from 'express-validator';
 import { AppDataSource } from '../db/conexion';
+import { Curso } from '../models/cursoModel';
 import { Profesor } from '../models/profesorModel';
 
 var profesores: Profesor[];
@@ -163,27 +164,27 @@ export const modificar = async (req: Request, res: Response) => {
 export const eliminar = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   try {
-    console.log(`ID recibido para eliminar: ${id}`);
-    /*await AppDataSource.transaction(async (transactionalEntityManager) => {
-      const cursosEstudiantesRepository =
-        transactionalEntityManager.getRepository(CursoEstudiante);
-      const estudianteRepository =
-        transactionalEntityManager.getRepository(Estudiante);
+    await AppDataSource.transaction(async (transactionalEntityManager) => {
+      const cursosRepository = transactionalEntityManager.getRepository(Curso);
+      const profesorRepository =
+        transactionalEntityManager.getRepository(Profesor);
 
-      const cursosRelacionados = await cursosEstudiantesRepository.count({
-        where: { estudiante: { id: Number(id) } },
+      const cursosRelacionados = await cursosRepository.count({
+        where: { profesor: { id: Number(id) } },
       });
       if (cursosRelacionados > 0) {
-        throw new Error('Estudiante cursando materias, no se puede eliminar');
+        throw new Error(
+          'El profesor tiene asignadas materias, no se puede eliminar'
+        );
       }
-      const deleteResult = await estudianteRepository.delete(id);
+      const deleteResult = await profesorRepository.delete(id);
 
       if (deleteResult.affected === 1) {
-        return res.json({ mensaje: 'Estudiante eliminado' });
+        return res.json({ mensaje: 'Profesor eliminado' });
       } else {
-        throw new Error('Estudiante no encontrado');
+        throw new Error('Profesor no encontrado');
       }
-    });*/
+    });
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(400).json({ mensaje: err.message });

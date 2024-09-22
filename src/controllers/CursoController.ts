@@ -12,15 +12,11 @@ export const validar = () => [
     .withMessage('El nombre del curso es obligatorio')
     .isLength({ min: 2 })
     .withMessage('El nombre del curso debe tener al menos 2 caracteres'),
-  check('descripcion')
-    .notEmpty()
-    .withMessage('Ingrese una descripcion del curso')
-    .isLength({ min: 15 })
-    .withMessage('La descripcion del curso debe tener al menos 15 caracteres'),
+  check('profesor_id').notEmpty().withMessage('Debe asignar a un profesor'),
   (req: Request, res: Response, next: NextFunction) => {
     const errores = validationResult(req);
     if (!errores.isEmpty()) {
-      return res.render('creaCurso', {
+      return res.render('creaCursos', {
         pagina: 'Crea Curso',
         errores: errores.array(),
       });
@@ -32,8 +28,11 @@ export const validar = () => [
 export const consultarTodos = async (req: Request, res: Response) => {
   try {
     const cursosRepository = AppDataSource.getRepository(Curso);
-    console.log('rede');
-    cursos = await cursosRepository.find();
+
+    const cursos = await cursosRepository.find({
+      relations: ['profesor'],
+    });
+
     res.render('listarCursos', {
       pagina: 'Lista de cursos',
       varnav: 'listar',
@@ -89,6 +88,7 @@ export const insertar = async (req: Request, res: Response) => {
       const cursoRepository = transactionalEntityManager.getRepository(Curso);
       const existeCurso = await cursoRepository.findOne({
         where: { nombre },
+        relations: ['profesor'],
       });
       if (existeCurso) {
         throw new Error('El curso ya existe.');
@@ -99,12 +99,11 @@ export const insertar = async (req: Request, res: Response) => {
       const profesor = await profesorRepository.findOne({
         where: { id: profesor_id },
       });
-      if (profesor) {
-        console.log(profesor.nombre);
-      }
+
       if (!profesor) {
         throw new Error('Profesor no encontrado.');
       }
+
       const nuevoCurso = cursoRepository.create({
         nombre,
         descripcion,
@@ -112,7 +111,18 @@ export const insertar = async (req: Request, res: Response) => {
       });
       await cursoRepository.save(nuevoCurso);
     });
-    const cursos = await AppDataSource.getRepository(Curso).find();
+    const cursos = await AppDataSource.getRepository(Curso).find({
+      relations: ['profesor'],
+    });
+
+    // Filtrar cursos sin profesor
+    const cursosFiltrados = cursos.filter((curso) => curso.profesor);
+
+    res.render('listarCursos', {
+      pagina: 'Lista de cursos',
+      cursos: cursosFiltrados,
+    });
+
     res.render('listarCursos', {
       pagina: 'Lista de cursos',
       cursos,
@@ -124,8 +134,14 @@ export const insertar = async (req: Request, res: Response) => {
   }
 };
 
-// sigo de aca
+// Problema no se quiere modificar - se soluciono y no se como  AHHHHHH!!!!
 export const modificar = async (req: Request, res: Response) => {
+  const reset = '\x1b[0m'; // Restablecer al color original
+  const red = '\x1b[31m'; // Rojo
+  const green = '\x1b[32m'; // Verde
+  const yellow = '\x1b[33m'; // Amarillo
+  const blue = '\x1b[34m'; // Azul
+
   const { id } = req.params;
   const { nombre, descripcion, profesor_id } = req.body;
 
@@ -157,22 +173,27 @@ export const modificar = async (req: Request, res: Response) => {
       });
 
       if (!profesor) {
-        throw new Error('Profesor no encontrado.');
+        return res.status(404).send('Profesor no encontrado');
       }
 
       cursoRepository.merge(curso, {
         nombre,
         descripcion,
-        profesor, // Asignamos el objeto profesor directamente
+        profesor,
       });
 
       await cursoRepository.save(curso);
+      console.log(green, 'Curso modificado con éxito', reset);
+
       return res.redirect('/cursos/listarCursos');
     });
   } catch (err: unknown) {
     if (err instanceof Error) {
-      console.error('Error al modificar el profesor:', err.message);
+      console.error('Error al modificar el curso:', err.message);
       return res.status(500).send(`Error del servidor: ${err.message}`);
+    } else {
+      console.error('Error desconocido:', err);
+      return res.status(500).send('Error desconocido');
     }
   }
 };
@@ -181,26 +202,25 @@ export const eliminar = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   try {
     console.log(`ID recibido para eliminar: ${id}`);
-    /*await AppDataSource.transaction(async (transactionalEntityManager) => {
-      const cursosEstudiantesRepository =
-        transactionalEntityManager.getRepository(CursoEstudiante);
-      const estudianteRepository =
-        transactionalEntityManager.getRepository(Estudiante);
+    await AppDataSource.transaction(async (transactionalEntityManager) => {
+      const cursoRepository = transactionalEntityManager.getRepository(Curso);
+      const profesorRepository =
+        transactionalEntityManager.getRepository(Profesor);
 
-      const cursosRelacionados = await cursosEstudiantesRepository.count({
-        where: { estudiante: { id: Number(id) } },
+      const profesorRelacionados = await profesorRepository.count({
+        where: { id: Number(id) },
       });
-      if (cursosRelacionados > 0) {
+      if (profesorRelacionados > 0) {
         throw new Error('Estudiante cursando materias, no se puede eliminar');
       }
-      const deleteResult = await estudianteRepository.delete(id);
+      const deleteResult = await cursoRepository.delete(id);
 
       if (deleteResult.affected === 1) {
-        return res.json({ mensaje: 'Estudiante eliminado' });
+        return res.json({ mensaje: 'Curso eliminado' });
       } else {
-        throw new Error('Estudiante no encontrado');
+        throw new Error('Curso no encontrado');
       }
-    });*/
+    });
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(400).json({ mensaje: err.message });

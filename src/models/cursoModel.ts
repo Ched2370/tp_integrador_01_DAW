@@ -30,7 +30,7 @@ export class Curso {
   updateAt: Date;
 
   @ManyToOne(() => Profesor, (profesor) => profesor.cursos)
-  @JoinColumn({ name: 'profesor_id' })
+  @JoinColumn({ name: 'Profesor_id' })
   profesor: Profesor;
 
   @ManyToMany(() => Estudiante)
