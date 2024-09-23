@@ -38,7 +38,7 @@ __decorate([
 ], Curso.prototype, "updateAt", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => profesorModel_1.Profesor, (profesor) => profesor.cursos),
-    (0, typeorm_1.JoinColumn)({ name: 'profesor_id' }),
+    (0, typeorm_1.JoinColumn)({ name: 'Profesor_id' }),
     __metadata("design:type", profesorModel_1.Profesor)
 ], Curso.prototype, "profesor", void 0);
 __decorate([

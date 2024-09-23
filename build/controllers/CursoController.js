@@ -21,15 +21,11 @@ const validar = () => [
         .withMessage('El nombre del curso es obligatorio')
         .isLength({ min: 2 })
         .withMessage('El nombre del curso debe tener al menos 2 caracteres'),
-    (0, express_validator_1.check)('descripcion')
-        .notEmpty()
-        .withMessage('Ingrese una descripcion del curso')
-        .isLength({ min: 15 })
-        .withMessage('La descripcion del curso debe tener al menos 15 caracteres'),
+    (0, express_validator_1.check)('profesor_id').notEmpty().withMessage('Debe asignar a un profesor'),
     (req, res, next) => {
         const errores = (0, express_validator_1.validationResult)(req);
         if (!errores.isEmpty()) {
-            return res.render('creaCurso', {
+            return res.render('creaCursos', {
                 pagina: 'Crea Curso',
                 errores: errores.array(),
             });
@@ -41,8 +37,9 @@ exports.validar = validar;
 const consultarTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const cursosRepository = conexion_1.AppDataSource.getRepository(cursoModel_1.Curso);
-        console.log('rede');
-        cursos = yield cursosRepository.find();
+        const cursos = yield cursosRepository.find({
+            relations: ['profesor'],
+        });
         res.render('listarCursos', {
             pagina: 'Lista de cursos',
             varnav: 'listar',
@@ -98,6 +95,7 @@ const insertar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const cursoRepository = transactionalEntityManager.getRepository(cursoModel_1.Curso);
             const existeCurso = yield cursoRepository.findOne({
                 where: { nombre },
+                relations: ['profesor'],
             });
             if (existeCurso) {
                 throw new Error('El curso ya existe.');
@@ -106,9 +104,6 @@ const insertar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const profesor = yield profesorRepository.findOne({
                 where: { id: profesor_id },
             });
-            if (profesor) {
-                console.log(profesor.nombre);
-            }
             if (!profesor) {
                 throw new Error('Profesor no encontrado.');
             }
@@ -119,7 +114,15 @@ const insertar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
             yield cursoRepository.save(nuevoCurso);
         }));
-        const cursos = yield conexion_1.AppDataSource.getRepository(cursoModel_1.Curso).find();
+        const cursos = yield conexion_1.AppDataSource.getRepository(cursoModel_1.Curso).find({
+            relations: ['profesor'],
+        });
+        // Filtrar cursos sin profesor
+        const cursosFiltrados = cursos.filter((curso) => curso.profesor);
+        res.render('listarCursos', {
+            pagina: 'Lista de cursos',
+            cursos: cursosFiltrados,
+        });
         res.render('listarCursos', {
             pagina: 'Lista de cursos',
             cursos,
@@ -132,7 +135,7 @@ const insertar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.insertar = insertar;
-// sigo de aca
+// Problema no se quiere modificar - se soluciono y no se como  AHHHHHH!!!!
 const modificar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { nombre, descripcion, profesor_id } = req.body;
@@ -158,12 +161,12 @@ const modificar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 where: { id: profesorIdNumber },
             });
             if (!profesor) {
-                throw new Error('Profesor no encontrado.');
+                return res.status(404).send('Profesor no encontrado');
             }
             cursoRepository.merge(curso, {
                 nombre,
                 descripcion,
-                profesor, // Asignamos el objeto profesor directamente
+                profesor,
             });
             yield cursoRepository.save(curso);
             return res.redirect('/cursos/listarCursos');
@@ -171,8 +174,12 @@ const modificar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (err) {
         if (err instanceof Error) {
-            console.error('Error al modificar el profesor:', err.message);
+            console.error('Error al modificar el curso:', err.message);
             return res.status(500).send(`Error del servidor: ${err.message}`);
+        }
+        else {
+            console.error('Error desconocido:', err);
+            return res.status(500).send('Error desconocido');
         }
     }
 });
@@ -181,26 +188,23 @@ const eliminar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
         console.log(`ID recibido para eliminar: ${id}`);
-        /*await AppDataSource.transaction(async (transactionalEntityManager) => {
-          const cursosEstudiantesRepository =
-            transactionalEntityManager.getRepository(CursoEstudiante);
-          const estudianteRepository =
-            transactionalEntityManager.getRepository(Estudiante);
-    
-          const cursosRelacionados = await cursosEstudiantesRepository.count({
-            where: { estudiante: { id: Number(id) } },
-          });
-          if (cursosRelacionados > 0) {
-            throw new Error('Estudiante cursando materias, no se puede eliminar');
-          }
-          const deleteResult = await estudianteRepository.delete(id);
-    
-          if (deleteResult.affected === 1) {
-            return res.json({ mensaje: 'Estudiante eliminado' });
-          } else {
-            throw new Error('Estudiante no encontrado');
-          }
-        });*/
+        yield conexion_1.AppDataSource.transaction((transactionalEntityManager) => __awaiter(void 0, void 0, void 0, function* () {
+            const cursoRepository = transactionalEntityManager.getRepository(cursoModel_1.Curso);
+            const profesorRepository = transactionalEntityManager.getRepository(profesorModel_1.Profesor);
+            const profesorRelacionados = yield profesorRepository.count({
+                where: { id: Number(id) },
+            });
+            if (profesorRelacionados > 0) {
+                throw new Error('Estudiante cursando materias, no se puede eliminar');
+            }
+            const deleteResult = yield cursoRepository.delete(id);
+            if (deleteResult.affected === 1) {
+                return res.json({ mensaje: 'Curso eliminado' });
+            }
+            else {
+                throw new Error('Curso no encontrado');
+            }
+        }));
     }
     catch (err) {
         if (err instanceof Error) {

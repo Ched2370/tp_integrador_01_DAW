@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.eliminar = exports.modificar = exports.insertar = exports.consultarUno = exports.consultarTodos = exports.validar = void 0;
 const express_validator_1 = require("express-validator");
 const conexion_1 = require("../db/conexion");
+const cursoModel_1 = require("../models/cursoModel");
 const profesorModel_1 = require("../models/profesorModel");
 var profesores;
 const validar = () => [
@@ -168,27 +169,23 @@ exports.modificar = modificar;
 const eliminar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
-        console.log(`ID recibido para eliminar: ${id}`);
-        /*await AppDataSource.transaction(async (transactionalEntityManager) => {
-          const cursosEstudiantesRepository =
-            transactionalEntityManager.getRepository(CursoEstudiante);
-          const estudianteRepository =
-            transactionalEntityManager.getRepository(Estudiante);
-    
-          const cursosRelacionados = await cursosEstudiantesRepository.count({
-            where: { estudiante: { id: Number(id) } },
-          });
-          if (cursosRelacionados > 0) {
-            throw new Error('Estudiante cursando materias, no se puede eliminar');
-          }
-          const deleteResult = await estudianteRepository.delete(id);
-    
-          if (deleteResult.affected === 1) {
-            return res.json({ mensaje: 'Estudiante eliminado' });
-          } else {
-            throw new Error('Estudiante no encontrado');
-          }
-        });*/
+        yield conexion_1.AppDataSource.transaction((transactionalEntityManager) => __awaiter(void 0, void 0, void 0, function* () {
+            const cursosRepository = transactionalEntityManager.getRepository(cursoModel_1.Curso);
+            const profesorRepository = transactionalEntityManager.getRepository(profesorModel_1.Profesor);
+            const cursosRelacionados = yield cursosRepository.count({
+                where: { profesor: { id: Number(id) } },
+            });
+            if (cursosRelacionados > 0) {
+                throw new Error('El profesor tiene asignadas materias, no se puede eliminar');
+            }
+            const deleteResult = yield profesorRepository.delete(id);
+            if (deleteResult.affected === 1) {
+                return res.json({ mensaje: 'Profesor eliminado' });
+            }
+            else {
+                throw new Error('Profesor no encontrado');
+            }
+        }));
     }
     catch (err) {
         if (err instanceof Error) {
