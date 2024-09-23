@@ -21,23 +21,23 @@ block contenido
             tbody
                 each inscripcion in inscripciones
                     tr
-                        td.px-6.py-4= inscripcion.curso_id
-                        td.px-6.py-4= inscripcion.estudiante_id
-                        td.px-6.py-4= inscripcion.nota
+                        td.px-6.py-4= inscripcion.curso ? inscripcion.curso.id : 'Sin registrar'
+                        td.px-6.py-4= inscripcion.estudiante ? inscripcion.estudiante.id : 'Sin registrar'
+                        td.px-6.py-4= inscripcion.nota ? inscripcion.nota : 'Sin registrar'
                         td.px-6.py-4
-                            a.text-blue-500(href=`/inscripciones/modificaInscripcion/${estudiante.id}/${curso.id}`) Editar
-                            a.text-red-500.ml-2(href="#", onclick=`eliminarInscripcion/${estudiante.id}/${curso.id}`) Eliminar
+                            a.text-blue-500(href=`/inscripciones/modificaInscripcion/${inscripcion.estudiante ? inscripcion.estudiante.id : ''}/${inscripcion.curso ? inscripcion.curso.id : ''}`) Editar
+                            a.text-red-500.ml-2(href="#", onclick=`eliminarInscripcion(${inscripcion.estudiante ? inscripcion.estudiante.id : 'null'}, ${inscripcion.curso ? inscripcion.curso.id : 'null'})`) Eliminar
 
 block scripts
     script.
-        function eliminarInscripcion(id) {
-            if (confirm('¿Estás seguro de que deseas eliminar este estudiante?')) {
-                fetch(`/inscripciones/${id}`, {
+        function eliminarInscripcion(estudiante_id, curso_id) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta inscripción?')) {
+                fetch(`/inscripciones/${estudiante_id}/${curso_id}`, {
                     method: 'DELETE'
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.mensaje === 'Inscripcion eliminado') {
+                    if (data.mensaje === 'Inscripcion eliminada') {
                         alert('Inscripcion eliminado con éxito.');
                         window.location.reload(); 
                     } else {
@@ -46,7 +46,7 @@ block scripts
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error al eliminar la inscripcion.');
+                    alert('Error al eliminar la inscripción.');
                 });
             }
         }

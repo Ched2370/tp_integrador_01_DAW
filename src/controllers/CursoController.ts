@@ -136,12 +136,6 @@ export const insertar = async (req: Request, res: Response) => {
 
 // Problema no se quiere modificar - se soluciono y no se como  AHHHHHH!!!!
 export const modificar = async (req: Request, res: Response) => {
-  const reset = '\x1b[0m'; // Restablecer al color original
-  const red = '\x1b[31m'; // Rojo
-  const green = '\x1b[32m'; // Verde
-  const yellow = '\x1b[33m'; // Amarillo
-  const blue = '\x1b[34m'; // Azul
-
   const { id } = req.params;
   const { nombre, descripcion, profesor_id } = req.body;
 
@@ -183,7 +177,6 @@ export const modificar = async (req: Request, res: Response) => {
       });
 
       await cursoRepository.save(curso);
-      console.log(green, 'Curso modificado con éxito', reset);
 
       return res.redirect('/cursos/listarCursos');
     });

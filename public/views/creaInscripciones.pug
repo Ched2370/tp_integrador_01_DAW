@@ -17,16 +17,16 @@ block contenido
                   
                     
                     div
-                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="curso_id") Curso
-                        input#curso_id.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Curso" type="text" name="curso_id" value=inscripcion? inscripcion.curso_id : '')
+                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="curso_id") ID Curso
+                        input#curso_id.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="ID Curso" type="text" name="curso_id" value=inscripcion? inscripcion.curso_id : '')
 
                     div
-                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="estudiante_id") Estudiante
-                        input#nombre.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Nombre" type="text" name="nombre" value=estudiante? inscripcion.estudiante_id : '')
+                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="estudiante_id") ID Estudiante
+                        input#estudiante_id.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="ID Estudiante" type="text" name="estudiante_id" value=inscripcion? inscripcion.estudiante_id : '')
                     
                     div
                         label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="nota") nota
-                        input#apellido.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Nota" type="text" name="nota" value=inscripcion? inscripcion.nota : '')
+                        input#nota.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Nota" type="text" name="nota" disabled value=inscripcion? inscripcion.nota : '')
                     
         
                     
