@@ -248,6 +248,12 @@ export const calificar = async (req: Request, res: Response) => {
   if (isNaN(notaNumber)) {
     return res.status(500).json({ msg: 'nota invalido' });
   }
+  if (notaNumber < 0) {
+    return res.status(200).json({ msg: 'La nota minima debe ser 0' });
+  }
+  if (notaNumber > 10) {
+    return res.status(200).json({ msg: 'La nota maxima debe ser 10' });
+  }
   try {
     await AppDataSource.transaction(async (transactionalEntityManager) => {
       const inscripcionRepository =

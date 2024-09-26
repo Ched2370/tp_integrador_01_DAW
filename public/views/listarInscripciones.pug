@@ -4,7 +4,8 @@ block contenido
     .flex.justify-end.mb-4
         ul.flex.space-x-4
             li
-                a(href="/inscripciones/creaInscripciones" class="text-green-600 hover:text-green-800") Inscribir
+                a(href="/inscripciones/creaInscripciones" class="text-green-600 hover:text-green-800")
+                    i(class="bi bi-plus-circle-fill h2")
     
     .py-10
         h1.text-4xl.my-10.font-extrabold.text-center Proyecto
@@ -34,8 +35,10 @@ block contenido
                         td.px-6.py-4= inscripcion.estudiante.nombre
                         td.px-6.py-4= inscripcion.nota 
                         td.px-6.py-4
-                            a.text-blue-500(href=`/inscripciones/modificaInscripcion/${inscripcion.estudiante_id}/${inscripcion.curso_id}`) Editar
-                            a.text-red-500.ml-2(href="#", onclick=`eliminarInscripcion(${inscripcion.estudiante_id}, ${inscripcion.curso_id})`) Eliminar
+                            a.text-blue-500.mx-2(href=`/inscripciones/modificaInscripcion/${inscripcion.estudiante_id}/${inscripcion.curso_id}`)
+                                i(class="bi bi-pencil-square")
+                            a.text-red-500.ml-2(href="#", onclick=`eliminarInscripcion(${inscripcion.estudiante_id}, ${inscripcion.curso_id})`)
+                                i(class="bi bi-trash3-fill")
 
 block scripts
     script.

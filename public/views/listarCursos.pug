@@ -4,7 +4,8 @@ block contenido
     .flex.justify-end.mb-4
         ul.flex.space-x-4
             li
-                a(href="/cursos/creaCursos" class="text-green-600 hover:text-green-800") Agregar Cursos
+                a(href="/cursos/creaCursos" class="text-green-600 hover:text-green-800")
+                    i(class="bi bi-plus-circle-fill h2")
     
     .py-10
         h1.text-4xl.my-10.font-extrabold.text-center Proyecto
@@ -17,7 +18,7 @@ block contenido
                     th.text-left.text-gray-500.uppercase.px-6.py-3 ID #
                     th.text-left.text-gray-500.uppercase.px-6.py-3 Curso
                     th.text-left.text-gray-500.uppercase.px-6.py-3 Descripcion
-                    th.text-left.text-gray-500.uppercase.px-6.py-3 ID Profesor
+                    th.text-left.text-gray-500.uppercase.px-6.py-3 Legajo Profesor
                     th.text-left.text-gray-500.uppercase.px-6.py-3 Nombre
                     th.text-left.text-gray-500.uppercase.px-6.py-3 Apellido
                     th.text-left.text-gray-500.uppercase.px-6.py-3 Accion
@@ -28,12 +29,14 @@ block contenido
                         td.px-6.py-4= 'C00'+curso.id
                         td.px-6.py-4= curso.nombre
                         td.px-6.py-4= curso.descripcion
-                        td.px-6.py-4= curso.profesor.id
+                        td.px-6.py-4= 'L00'+curso.profesor.id
                         td.px-6.py-4= curso.profesor.nombre
                         td.px-6.py-4= curso.profesor.apellido
                         td.px-6.py-4
-                            a.text-blue-500(href=`/cursos/modificaCurso/${curso.id}`) Editar
-                            a.text-red-500.ml-2(href="#", onclick=`eliminarCurso('${curso.id}')`) Eliminar
+                            a.text-blue-500.mx-2(href=`/cursos/modificaCurso/${curso.id}`)
+                                i(class="bi bi-pencil-square")
+                            a.text-red-500.ml-2(href="#", onclick=`eliminarCurso('${curso.id}')`) 
+                                i(class="bi bi-trash3-fill")
 
 block scripts
     script.
