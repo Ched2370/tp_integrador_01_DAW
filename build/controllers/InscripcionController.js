@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.calificar = exports.cancelarInscripcion = exports.inscribir = exports.consultarxCurso = exports.consultarxAlumno = exports.consultarTodos = exports.validar = void 0;
+exports.calificar = exports.cancelarInscripcion = exports.inscribir = exports.consultarInscripcion = exports.consultarxCurso = exports.consultarxAlumno = exports.consultarTodos = exports.validar = void 0;
 const express_validator_1 = require("express-validator");
 const conexion_1 = require("../db/conexion");
 const cursoEstudianteModel_1 = require("../models/cursoEstudianteModel");
@@ -92,6 +92,54 @@ const consultarxCurso = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.consultarxCurso = consultarxCurso;
+const consultarInscripcion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { estudiante_id, curso_id } = req.params;
+    const estudiante_idNumber = Number(estudiante_id);
+    const curso_idNumber = Number(curso_id);
+    if (isNaN(estudiante_idNumber)) {
+        return res
+            .status(400)
+            .json({ mensaje: 'ID estudiante inválido, debe ser un número' });
+    }
+    if (isNaN(curso_idNumber)) {
+        return res
+            .status(400)
+            .json({ mensaje: 'ID curso inválido, debe ser un número' });
+    }
+    try {
+        const estudianteRepository = conexion_1.AppDataSource.getRepository(estudianteModel_1.Estudiante);
+        const estudiante = yield estudianteRepository.findOne({
+            where: { id: estudiante_idNumber },
+        });
+        if (!estudiante) {
+            return res.status(400).json({ msg: 'Estudiante no encontrado' });
+        }
+        const cursoRepository = conexion_1.AppDataSource.getRepository(cursoModel_1.Curso);
+        const curso = yield cursoRepository.findOne({
+            where: { id: curso_idNumber },
+        });
+        if (!curso) {
+            return res.status(400).json({ msg: 'Curso no encontrado' });
+        }
+        const inscripcionRepository = conexion_1.AppDataSource.getRepository(cursoEstudianteModel_1.CursoEstudiante);
+        const inscripcion = yield inscripcionRepository.findOne({
+            where: {
+                estudiante_id: estudiante_idNumber,
+                curso_id: curso_idNumber,
+            },
+            relations: ['estudiante', 'curso'],
+        });
+        if (!inscripcion) {
+            return res.status(404).json({ msg: 'Inscripción no encontrada' });
+        }
+        return inscripcion;
+    }
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ mensaje: 'Error en el servidor' });
+    }
+});
+exports.consultarInscripcion = consultarInscripcion;
 const inscribir = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errores = (0, express_validator_1.validationResult)(req);
     if (!errores.isEmpty()) {
@@ -170,13 +218,6 @@ const cancelarInscripcion = (req, res) => __awaiter(void 0, void 0, void 0, func
                 throw new Error('Curso no encontrado');
             }
         }));
-        /*const inscripciones = await AppDataSource.getRepository(
-          CursoEstudiante
-        ).find();
-        res.render('listarInscripciones', {
-          pagina: 'Lista de Inscripciones',
-          inscripciones,
-        });*/
     }
     catch (err) {
         if (err instanceof Error) {
@@ -186,8 +227,43 @@ const cancelarInscripcion = (req, res) => __awaiter(void 0, void 0, void 0, func
 });
 exports.cancelarInscripcion = cancelarInscripcion;
 const calificar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { estudiante_id, curso_id } = req.params;
+    const { nota } = req.body;
+    const estudiante_idNumber = parseInt(estudiante_id);
+    const curso_idNumber = parseInt(curso_id);
+    const notaNumber = parseInt(nota);
+    if (isNaN(estudiante_idNumber)) {
+        return res.status(500).json({ msg: 'ID estudiante invalido' });
+    }
+    if (isNaN(curso_idNumber)) {
+        return res.status(500).json({ msg: 'ID curso invalido' });
+    }
+    if (isNaN(notaNumber)) {
+        return res.status(500).json({ msg: 'nota invalido' });
+    }
+    if (notaNumber < 0) {
+        return res.status(200).json({ msg: 'La nota minima debe ser 0' });
+    }
+    if (notaNumber > 10) {
+        return res.status(200).json({ msg: 'La nota maxima debe ser 10' });
+    }
     try {
-        res.status(200).json({ mensaje: 'Parada por ahora' });
+        yield conexion_1.AppDataSource.transaction((transactionalEntityManager) => __awaiter(void 0, void 0, void 0, function* () {
+            const inscripcionRepository = transactionalEntityManager.getRepository(cursoEstudianteModel_1.CursoEstudiante);
+            const inscripcion = yield inscripcionRepository.findOne({
+                where: { estudiante_id: estudiante_idNumber, curso_id: curso_idNumber },
+            });
+            if (!inscripcion) {
+                return res.status(404).send('inscripcion no encontrado');
+            }
+            inscripcionRepository.merge(inscripcion, {
+                estudiante_id: estudiante_idNumber,
+                curso_id: curso_idNumber,
+                nota: notaNumber,
+            });
+            yield inscripcionRepository.save(inscripcion);
+            return res.redirect('/inscripciones/listarInscripciones');
+        }));
     }
     catch (err) {
         if (err instanceof Error) {

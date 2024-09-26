@@ -26,6 +26,7 @@ app.get('/', (req, res) => {
     console.log(__dirname);
     return res.render('index', {
         pagina: 'App Univerdsidad',
+        ruta: '/',
         // errores: errores.array()
     });
 });
