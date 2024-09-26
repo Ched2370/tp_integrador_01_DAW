@@ -12,34 +12,34 @@ block contenido
 
         .mt-8.mx-auto.max-w-md
             .bg-white.py-8.px-4.shadow
-                form(method='POST' action=`/inscripciones/${estudiante_id}/${curso_id}?_method=PUT` noValidate)
+                form(method='POST' action=`/inscripciones/${inscripcion.estudiante_id}/${inscripcion.curso_id}/${inscripcion.nota}?_method=PUT` noValidate)
                     
-                    div
+                    div              
                         label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="curso_id") ID Curso
-                        input#curso_id.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="ID Curso" type="text" name="curso_id" value=inscripcion? inscripcion.curso_id : 'null')
+                        input#curso_id.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="ID Curso" type="text" disabled name="curso_id" value= `C00${inscripcion.curso_id}`)
 
                     div
-                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="estudiante_id") ID Estudiante
-                        input#estudiante_id.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="ID Estudiante" type="text" name="estudiante_id" value=inscripcion? inscripcion.estudiante_id : 'null')
+                        label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="estudiante_id") Matricula Estudiante
+                        input#estudiante_id.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="ID Estudiante" type="text" disabled  name="estudiante_id" value= `M00${inscripcion.estudiante_id}`)
                     
                     div
                         label.block.text-sm.uppercase.text-gray-500.mb-3.font-bold(for="nota") nota
-                        input#nota.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Nota" type="text" name="nota" disabled value=inscripcion? inscripcion.nota : 'null')
+                        input#nota.w-full.px-3.py-2.border.border-gray-300.rounded-md.placeholder-gray-400(placeholder="Nota" type="number" name="nota" max=100 min=1 value= inscripcion.nota : '')
                     
-                    button.bg-blue-500.text-white.px-4.py-2.rounded-md.mt-4(type='submit') Modificar Estudiante
-
+                    button.bg-blue-500.text-white.px-4.py-2.rounded-md.mt-4(type='submit') Modificar Nota
 
 block scripts
     script.
-        function calidar(estudiante_id, curso_id) {
-            if (confirm('¿Deseas agregar una nota inscripción?')) {
-                fetch(`/inscripciones/${estudiante_id}/${curso_id}`, {
+        function calidar(estudiante_id, curso_id, nota) {
+            console.log(estudiante_id, curso_id, nota)
+            if (confirm('¿Deseas agregar una nota nueva?')) {
+                fetch(`/inscripciones/${estudiante_id}/${curso_id}/${nota}`, {
                     method: 'PUT'
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.mensaje === 'Inscripcion eliminada') {
-                        alert('Inscripcion eliminado con éxito.');
+                    if (data.mensaje === 'Nota modificada') {
+                        alert('Se ha modificado una nota.');
                         window.location.reload(); 
                     } else {
                         alert(data.mensaje); 

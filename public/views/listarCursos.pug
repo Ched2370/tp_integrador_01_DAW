@@ -14,6 +14,7 @@ block contenido
         table.table-auto.w-full.mt-4
             thead
                 tr
+                    th.text-left.text-gray-500.uppercase.px-6.py-3 ID #
                     th.text-left.text-gray-500.uppercase.px-6.py-3 Curso
                     th.text-left.text-gray-500.uppercase.px-6.py-3 Descripcion
                     th.text-left.text-gray-500.uppercase.px-6.py-3 ID Profesor
@@ -24,6 +25,7 @@ block contenido
             tbody
                 each curso in cursos
                     tr
+                        td.px-6.py-4= 'C00'+curso.id
                         td.px-6.py-4= curso.nombre
                         td.px-6.py-4= curso.descripcion
                         td.px-6.py-4= curso.profesor.id

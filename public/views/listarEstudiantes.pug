@@ -14,6 +14,7 @@ block contenido
         table.table-auto.w-full.mt-4
             thead
                 tr
+                    th.text-left.text-gray-500.uppercase.px-6.py-3 Matricula
                     th.text-left.text-gray-500.uppercase.px-6.py-3 Dni
                     th.text-left.text-gray-500.uppercase.px-6.py-3 Nombre
                     th.text-left.text-gray-500.uppercase.px-6.py-3 Apellido
@@ -22,6 +23,7 @@ block contenido
             tbody
                 each estudiante in estudiantes
                     tr
+                        td.px-6.py-4= 'M00'+estudiante.id
                         td.px-6.py-4= estudiante.dni
                         td.px-6.py-4= estudiante.nombre
                         td.px-6.py-4= estudiante.apellido

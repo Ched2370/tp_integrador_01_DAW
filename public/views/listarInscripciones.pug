@@ -14,19 +14,28 @@ block contenido
         table.table-auto.w-full.mt-4
             thead
                 tr
+                    th.text-left.text-gray-500.uppercase.px-6.py-3 ID Curso
                     th.text-left.text-gray-500.uppercase.px-6.py-3 Curso
-                    th.text-left.text-gray-500.uppercase.px-6.py-3 Estudiante
+                    th.text-left.text-gray-500.uppercase.px-6.py-3 Matricula Estudiante
+                    th.text-left.text-gray-500.uppercase.px-6.py-3 DNI
+                    th.text-left.text-gray-500.uppercase.px-6.py-3 Nombre
+                    th.text-left.text-gray-500.uppercase.px-6.py-3 Apellido
                     th.text-left.text-gray-500.uppercase.px-6.py-3 Nota
+                    th.text-left.text-gray-500.uppercase.px-6.py-3 Accion
 
             tbody
                 each inscripcion in inscripciones
                     tr
-                        td.px-6.py-4= inscripcion.curso ? inscripcion.curso.id : 'Sin registrar'
-                        td.px-6.py-4= inscripcion.estudiante ? inscripcion.estudiante.id : 'Sin registrar'
-                        td.px-6.py-4= inscripcion.nota ? inscripcion.nota : 'Sin registrar'
+                        td.px-6.py-4= `C00${inscripcion.curso_id}`
+                        td.px-6.py-4= inscripcion.curso.nombre
+                        td.px-6.py-4= `M00${inscripcion.estudiante_id}`
+                        td.px-6.py-4= inscripcion.estudiante.dni
+                        td.px-6.py-4= inscripcion.estudiante.apellido
+                        td.px-6.py-4= inscripcion.estudiante.nombre
+                        td.px-6.py-4= inscripcion.nota 
                         td.px-6.py-4
-                            a.text-blue-500(href=`/inscripciones/modificaInscripcion/${inscripcion.estudiante ? inscripcion.estudiante.id : ''}/${inscripcion.curso ? inscripcion.curso.id : ''}`) Editar
-                            a.text-red-500.ml-2(href="#", onclick=`eliminarInscripcion(${inscripcion.estudiante ? inscripcion.estudiante.id : 'null'}, ${inscripcion.curso ? inscripcion.curso.id : 'null'})`) Eliminar
+                            a.text-blue-500(href=`/inscripciones/modificaInscripcion/${inscripcion.estudiante_id}/${inscripcion.curso_id}`) Editar
+                            a.text-red-500.ml-2(href="#", onclick=`eliminarInscripcion(${inscripcion.estudiante_id}, ${inscripcion.curso_id})`) Eliminar
 
 block scripts
     script.
