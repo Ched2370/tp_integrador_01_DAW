@@ -135,7 +135,6 @@ const insertar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.insertar = insertar;
-// Problema no se quiere modificar - se soluciono y no se como  AHHHHHH!!!!
 const modificar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const { nombre, descripcion, profesor_id } = req.body;
@@ -195,7 +194,7 @@ const eliminar = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 where: { id: Number(id) },
             });
             if (profesorRelacionados > 0) {
-                throw new Error('Estudiante cursando materias, no se puede eliminar');
+                throw new Error('Curso con profesor asignado, no se puede eliminar');
             }
             const deleteResult = yield cursoRepository.delete(id);
             if (deleteResult.affected === 1) {

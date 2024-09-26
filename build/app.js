@@ -13,7 +13,6 @@ const estudianteRouter_1 = __importDefault(require("./routes/estudianteRouter"))
 const inscripcionRouter_1 = __importDefault(require("./routes/inscripcionRouter"));
 const profesorRoutes_1 = __importDefault(require("./routes/profesorRoutes"));
 const app = (0, express_1.default)();
-//habilitamos pug
 app.set('view engine', 'pug');
 app.set('views', path_1.default.join(__dirname, '../public/views'));
 app.use(express_1.default.static('public'));

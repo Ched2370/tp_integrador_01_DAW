@@ -134,7 +134,6 @@ export const insertar = async (req: Request, res: Response) => {
   }
 };
 
-// Problema no se quiere modificar - se soluciono y no se como  AHHHHHH!!!!
 export const modificar = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { nombre, descripcion, profesor_id } = req.body;
@@ -204,7 +203,7 @@ export const eliminar = async (req: Request, res: Response): Promise<void> => {
         where: { id: Number(id) },
       });
       if (profesorRelacionados > 0) {
-        throw new Error('Estudiante cursando materias, no se puede eliminar');
+        throw new Error('Curso con profesor asignado, no se puede eliminar');
       }
       const deleteResult = await cursoRepository.delete(id);
 

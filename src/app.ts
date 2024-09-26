@@ -10,7 +10,6 @@ import profesorRouter from './routes/profesorRoutes';
 
 const app = express();
 
-//habilitamos pug
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, '../public/views'));
 
